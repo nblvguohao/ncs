@@ -28,6 +28,9 @@ cache_colabfold/
 # Results (regenerable)
 results/alphafold_validation/af_predictions_docker/
 results/alphafold_validation/af_predictions_test/
+results/alphafold_validation/af_predictions/*.a3m
+results/alphafold_validation/af_predictions/*_env/
+results/alphafold_validation/af_predictions/*_pairgreedy/
 !results/.gitkeep
 
 # OS
