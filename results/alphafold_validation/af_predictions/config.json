@@ -1,5 +1,5 @@
 {
-    "num_queries": 10,
+    "num_queries": 1,
     "use_templates": false,
     "num_relax": 5,
     "relax_max_iterations": 2000,
