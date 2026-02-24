@@ -3,18 +3,16 @@
 # Supports both Docker (recommended) and local installation
 
 INPUT_DIR=$(readlink -f results/alphafold_validation/fasta_inputs)
-MULTIMER_DIR=$(readlink -f results/alphafold_validation/fasta_inputs/multimer_only)
+MULTIMER_DIR=${INPUT_DIR}/multimer_only
 OUTPUT_DIR=$(readlink -f results/alphafold_validation/af_predictions)
 CACHE_DIR=$(readlink -f cache_colabfold)
 
+mkdir -p $MULTIMER_DIR
 mkdir -p $OUTPUT_DIR
 mkdir -p $CACHE_DIR
-rm -rf $MULTIMER_DIR
-mkdir -p $MULTIMER_DIR
-find $INPUT_DIR -maxdepth 1 -type f -name '*.fasta' ! -name '*_separate.fasta' -exec cp {} $MULTIMER_DIR/ \;
 
-echo "Using paired multimer FASTAs from: $MULTIMER_DIR"
-ls -1 $MULTIMER_DIR | head -20
+# Filter only multimer inputs
+find $INPUT_DIR -maxdepth 1 -type f -name '*.fasta' ! -name '*_separate.fasta' -exec cp {} $MULTIMER_DIR/ \;
 
 # Check if Docker is available
 if command -v docker &> /dev/null; then
