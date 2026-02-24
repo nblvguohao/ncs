@@ -247,23 +247,25 @@ def fig6_esm2_gradient(results_dir, out_dir):
     """Line plot: leakage gradient for BW-site vs ESM-2 features."""
     set_nature_style()
 
-    # BW-site physchem gradient
+    # BW-site physchem gradient (real results)
     thresholds = [0.6, 0.5, 0.4, 0.3, 0.2]
-    bw_aucs = [0.839, 0.840, 0.820, 0.787, 0.766]
+    bw_aucs = [0.818, 0.819, 0.785, 0.778, 0.798]
 
-    # ESM-2 gradient (approximate; replace with actual results)
-    esm_aucs = [0.830, 0.825, 0.810, 0.775, 0.755]
+    # ESM-2 BW gradient (real results from run_esm2_leakage.py)
+    esm_aucs = [0.851, 0.860, 0.824, 0.809, 0.777]
 
     fig, ax = plt.subplots(figsize=(SINGLE_COL_WIDTH, 2.4))
 
     ax.plot(thresholds, bw_aucs, "o-", color=NC["blue"], markersize=4,
-            label="BW-site physicochemical", linewidth=1.2)
+            label="BW-site physicochemical (145d)", linewidth=1.2)
     ax.plot(thresholds, esm_aucs, "s--", color=NC["red"], markersize=4,
-            label="ESM-2 BW embeddings", linewidth=1.2)
+            label="ESM-2 BW embeddings (9280d)", linewidth=1.2)
 
-    # Reference lines
-    ax.axhline(0.599, color=NC["blue"], ls=":", lw=0.5, alpha=0.6)
-    ax.text(0.19, 0.605, "BW-site subfamily CV", fontsize=5, color=NC["blue"])
+    # Reference lines: subfamily CV baselines
+    ax.axhline(0.604, color=NC["blue"], ls=":", lw=0.5, alpha=0.6)
+    ax.text(0.19, 0.610, "BW-site subfamily CV", fontsize=5, color=NC["blue"])
+    ax.axhline(0.623, color=NC["red"], ls=":", lw=0.5, alpha=0.6)
+    ax.text(0.19, 0.630, "ESM-2 subfamily CV", fontsize=5, color=NC["red"])
     ax.axhline(0.5, color=NC["lightgrey"], ls="--", lw=0.5)
 
     ax.set_xlabel("Sequence identity threshold")

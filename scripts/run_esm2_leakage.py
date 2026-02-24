@@ -117,7 +117,20 @@ def run_esm2_leakage_gradient(dataset, bw_cache, model_name, device, target="Gq"
         if os.path.exists(pp):
             print(f"  Loading precomputed ESM-2 embeddings: {pp}")
             data = np.load(pp, allow_pickle=True)
-            X_esm = data["embeddings"] if "embeddings" in data else data["X"]
+            # Handle different key conventions
+            if "X_bw_emb" in data:
+                raw = data["X_bw_emb"]  # (n, 29, 320) -> flatten to (n, 29*320)
+                X_esm = raw.reshape(raw.shape[0], -1)
+            elif "embeddings" in data:
+                X_esm = data["embeddings"]
+            else:
+                X_esm = data[list(data.keys())[0]]
+                if X_esm.ndim == 3:
+                    X_esm = X_esm.reshape(X_esm.shape[0], -1)
+            # Match entry order to dataset
+            if "entries" in data:
+                emb_entries = list(data["entries"])
+                print(f"  Embeddings: {X_esm.shape} for {len(emb_entries)} receptors")
             break
 
     if X_esm is None:
@@ -132,16 +145,33 @@ def run_esm2_leakage_gradient(dataset, bw_cache, model_name, device, target="Gq"
             print("  [SKIP] ESM-2 not available")
             return None
 
+    # Align ESM-2 embeddings with dataset order (may differ in size)
+    if "entries" in data:
+        emb_entries = list(data["entries"])
+        entry_set = set(emb_entries)
+        keep_mask = [e in entry_set for e in dataset.entry_names]
+        emb_idx_map = {e: i for i, e in enumerate(emb_entries)}
+        reorder = [emb_idx_map[e] for e in dataset.entry_names if e in entry_set]
+        X_esm = X_esm[reorder]
+        # Filter dataset arrays to matching subset
+        keep_indices = [i for i, e in enumerate(dataset.entry_names) if e in entry_set]
+    else:
+        keep_indices = list(range(len(dataset.entry_names)))
+
     print(f"\n{'='*64}")
     print(f"  ESM-2 Leakage Gradient Quantification")
-    print(f"  Feature dims: {X_esm.shape[1]}  |  Target: {target}")
+    print(f"  Feature dims: {X_esm.shape[1]}  |  Matched receptors: {X_esm.shape[0]}  |  Target: {target}")
     print(f"{'='*64}")
 
-    y = dataset.get_labels(target)
+    y_full = dataset.get_labels(target)
+    y = y_full[keep_indices]
+    families_sub = [dataset.families[i] for i in keep_indices]
+    sequences_sub = [dataset.sequences[i] for i in keep_indices]
+    entry_names_sub = [dataset.entry_names[i] for i in keep_indices]
     models = {"Ensemble": build_models()["Ensemble"]}
 
-    # Also get BW-site physicochemical features for comparison
-    X_bw, _ = build_bw_feature_matrix(dataset.entry_names, bw_cache)
+    # Also get BW-site physicochemical features for comparison (aligned)
+    X_bw, _ = build_bw_feature_matrix(entry_names_sub, bw_cache)
 
     results = []
 
@@ -160,7 +190,7 @@ def run_esm2_leakage_gradient(dataset, bw_cache, model_name, device, target="Gq"
                         "AUC_std": agg["auc"]["std"]})
 
         # Subfamily CV
-        folds = grouped_kfold_cv(y, dataset.families, n_folds=5, seed=42)
+        folds = grouped_kfold_cv(y, families_sub, n_folds=5, seed=42)
         fold_metrics = _run_cv(X, y, folds, models)
         agg = aggregate_cv_results(fold_metrics)
         auc_s = agg["auc"]["mean"]
@@ -172,7 +202,7 @@ def run_esm2_leakage_gradient(dataset, bw_cache, model_name, device, target="Gq"
         # Sequence cluster CV at multiple thresholds
         for thresh in [0.6, 0.5, 0.4, 0.3, 0.2]:
             try:
-                folds = seqcluster_kfold_cv(y, dataset.sequences,
+                folds = seqcluster_kfold_cv(y, sequences_sub,
                                              threshold=thresh, n_folds=5, seed=42)
                 fold_metrics = _run_cv(X, y, folds, models)
                 agg = aggregate_cv_results(fold_metrics)
