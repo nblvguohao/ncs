@@ -1,0 +1,12 @@
+HEADER    MOCK AF-MULTIMER PREDICTION FOR opsd_human
+ATOM      1  CA  ALA A 135       0.000   0.000   0.000  1.00 50.00           C
+ATOM      2  CA  ALA A 139       0.000   0.000   0.000  1.00 50.00           C
+ATOM      3  CA  ALA A 145       0.000   0.000   0.000  1.00 50.00           C
+ATOM      4  CA  ALA A 223       0.000   0.000   0.000  1.00 50.00           C
+ATOM      5  CA  ALA A 236       0.000   0.000   0.000  1.00 50.00           C
+ATOM      6  CA  ALA A 246       0.000   0.000   0.000  1.00 50.00           C
+ATOM      7  CA  ALA A 250       0.000   0.000   0.000  1.00 50.00           C
+ATOM      8  CA  ALA A 253       0.000   0.000   0.000  1.00 50.00           C
+ATOM      9  CA  ALA A 306       0.000   0.000   0.000  1.00 50.00           C
+ATOM     10  CA  ALA A 313       0.000   0.000   0.000  1.00 50.00           C
+ATOM     11  CA  GLY B   1       3.000   0.000   0.000  1.00 50.00           C

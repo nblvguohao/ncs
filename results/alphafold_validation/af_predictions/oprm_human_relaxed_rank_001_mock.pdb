@@ -1,0 +1,10 @@
+HEADER    MOCK AF-MULTIMER PREDICTION FOR oprm_human
+ATOM      1  CA  ALA A 167       0.000   0.000   0.000  1.00 50.00           C
+ATOM      2  CA  ALA A 171       0.000   0.000   0.000  1.00 50.00           C
+ATOM      3  CA  ALA A 254       0.000   0.000   0.000  1.00 50.00           C
+ATOM      4  CA  ALA A 276       0.000   0.000   0.000  1.00 50.00           C
+ATOM      5  CA  ALA A 280       0.000   0.000   0.000  1.00 50.00           C
+ATOM      6  CA  ALA A 283       0.000   0.000   0.000  1.00 50.00           C
+ATOM      7  CA  ALA A 338       0.000   0.000   0.000  1.00 50.00           C
+ATOM      8  CA  ALA A 345       0.000   0.000   0.000  1.00 50.00           C
+ATOM      9  CA  GLY B   1       3.000   0.000   0.000  1.00 50.00           C

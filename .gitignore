@@ -23,9 +23,11 @@ data/esm2_*.npz
 data/esm2_*.npy
 data/*.json
 !data/.gitkeep
+cache_colabfold/
 
 # Results (regenerable)
-results/*.csv
+results/alphafold_validation/af_predictions_docker/
+results/alphafold_validation/af_predictions_test/
 !results/.gitkeep
 
 # OS

@@ -1,0 +1,14 @@
+HEADER    MOCK AF-MULTIMER PREDICTION FOR acm1_human
+ATOM      1  CA  ALA A 123       0.000   0.000   0.000  1.00 50.00           C
+ATOM      2  CA  ALA A 127       0.000   0.000   0.000  1.00 50.00           C
+ATOM      3  CA  ALA A 130       0.000   0.000   0.000  1.00 50.00           C
+ATOM      4  CA  ALA A 133       0.000   0.000   0.000  1.00 50.00           C
+ATOM      5  CA  ALA A 208       0.000   0.000   0.000  1.00 50.00           C
+ATOM      6  CA  ALA A 215       0.000   0.000   0.000  1.00 50.00           C
+ATOM      7  CA  ALA A 221       0.000   0.000   0.000  1.00 50.00           C
+ATOM      8  CA  ALA A 359       0.000   0.000   0.000  1.00 50.00           C
+ATOM      9  CA  ALA A 363       0.000   0.000   0.000  1.00 50.00           C
+ATOM     10  CA  ALA A 366       0.000   0.000   0.000  1.00 50.00           C
+ATOM     11  CA  ALA A 418       0.000   0.000   0.000  1.00 50.00           C
+ATOM     12  CA  ALA A 425       0.000   0.000   0.000  1.00 50.00           C
+ATOM     13  CA  GLY B   1       3.000   0.000   0.000  1.00 50.00           C

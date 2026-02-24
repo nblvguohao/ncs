@@ -1,0 +1,9 @@
+HEADER    MOCK AF-MULTIMER PREDICTION FOR glr_human
+ATOM      1  CA  ALA A 245       0.000   0.000   0.000  1.00 50.00           C
+ATOM      2  CA  ALA A 249       0.000   0.000   0.000  1.00 50.00           C
+ATOM      3  CA  ALA A 326       0.000   0.000   0.000  1.00 50.00           C
+ATOM      4  CA  ALA A 342       0.000   0.000   0.000  1.00 50.00           C
+ATOM      5  CA  ALA A 345       0.000   0.000   0.000  1.00 50.00           C
+ATOM      6  CA  ALA A 396       0.000   0.000   0.000  1.00 50.00           C
+ATOM      7  CA  ALA A 407       0.000   0.000   0.000  1.00 50.00           C
+ATOM      8  CA  GLY B   1       3.000   0.000   0.000  1.00 50.00           C
