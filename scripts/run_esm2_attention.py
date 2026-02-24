@@ -99,7 +99,7 @@ def extract_attention_maps(dataset, bw_cache, model_name, device):
         batch_tokens = batch_tokens.to(device)
 
         with torch.no_grad():
-            results = model(batch_tokens, repr_layers=[], return_contacts=False)
+            results = model(batch_tokens, repr_layers=[], need_head_weights=True)
             # results["attentions"]: (1, n_layers, n_heads, seq_len+2, seq_len+2)
             attentions = results["attentions"].cpu().numpy()[0]
             # Shape: (n_layers, n_heads, L+2, L+2)

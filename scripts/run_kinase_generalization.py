@@ -82,49 +82,194 @@ def _encode_residue(aa):
 
 # ── Step 1: Data preparation ─────────────────────────────────────────────
 
+# Manning et al. (2002) kinase group classification by gene name prefix
+# Maps gene name patterns -> (group, family)
+MANNING_GENE_MAP = {
+    # AGC group
+    "AKT": ("AGC", "AKT"), "PKC": ("AGC", "PKC"), "PRKC": ("AGC", "PKC"),
+    "PRKA": ("AGC", "PKA"), "PRKAC": ("AGC", "PKA"), "SGK": ("AGC", "SGK"),
+    "GRK": ("AGC", "GRK"), "ADRBK": ("AGC", "GRK"), "RSK": ("AGC", "RSK"),
+    "RPS6K": ("AGC", "RSK"), "ROCK": ("AGC", "DMPK"), "MAST": ("AGC", "MAST"),
+    "PDK": ("AGC", "PDK"), "PDPK": ("AGC", "PDK"), "PKN": ("AGC", "PKN"),
+    # CAMK group
+    "CAMK": ("CAMK", "CaMK"), "DAPK": ("CAMK", "DAPK"), "DCLK": ("CAMK", "DCAMKL"),
+    "MARK": ("CAMK", "MARK"), "NUAK": ("CAMK", "NUAK"), "MELK": ("CAMK", "MELK"),
+    "CASK": ("CAMK", "CASK"), "BRSK": ("CAMK", "BRSK"), "PASK": ("CAMK", "PASK"),
+    "PHK": ("CAMK", "PHK"), "PHKG": ("CAMK", "PHK"), "SNRK": ("CAMK", "SNRK"),
+    "AMPK": ("CAMK", "AMPK"), "PRKAA": ("CAMK", "AMPK"), "SNF1LK": ("CAMK", "SNF1LK"),
+    "SIK": ("CAMK", "SNF1LK"), "STK11": ("CAMK", "LKB"),
+    # CK1 group
+    "CSNK1": ("CK1", "CK1"), "TTBK": ("CK1", "TTBK"), "VRK": ("CK1", "VRK"),
+    # CMGC group
+    "CDK": ("CMGC", "CDK"), "MAPK": ("CMGC", "MAPK"), "GSK": ("CMGC", "GSK"),
+    "CLK": ("CMGC", "CLK"), "DYRK": ("CMGC", "DYRK"), "SRPK": ("CMGC", "SRPK"),
+    "PRPF4B": ("CMGC", "CLK"), "HIPK": ("CMGC", "DYRK"),
+    # STE group
+    "MAP2K": ("STE", "MAP2K"), "MAP3K": ("STE", "MAP3K"), "MAP4K": ("STE", "MAP4K"),
+    "PAK": ("STE", "PAK"), "STK3": ("STE", "MST"), "STK4": ("STE", "MST"),
+    "STK24": ("STE", "MST"), "STK25": ("STE", "MST"), "STK26": ("STE", "MST"),
+    "TAOK": ("STE", "TAO"), "MINK1": ("STE", "MAP4K"), "TNIK": ("STE", "MAP4K"),
+    "NRK": ("STE", "MAP4K"), "KALRN": ("STE", "STE20"),
+    # TK group (tyrosine kinases)
+    "EGFR": ("TK", "EGFR"), "ERBB": ("TK", "EGFR"), "INSR": ("TK", "INSR"),
+    "IGF1R": ("TK", "INSR"), "INSRR": ("TK", "INSR"),
+    "PDGFR": ("TK", "PDGFR"), "KIT": ("TK", "PDGFR"), "FLT": ("TK", "PDGFR"),
+    "CSF1R": ("TK", "PDGFR"), "KDR": ("TK", "PDGFR"),
+    "FGFR": ("TK", "FGFR"), "SRC": ("TK", "SRC"), "FYN": ("TK", "SRC"),
+    "YES": ("TK", "SRC"), "LCK": ("TK", "SRC"), "LYN": ("TK", "SRC"),
+    "HCK": ("TK", "SRC"), "FGR": ("TK", "SRC"), "BLK": ("TK", "SRC"),
+    "ABL": ("TK", "ABL"), "JAK": ("TK", "JAK"), "TYK": ("TK", "JAK"),
+    "BTK": ("TK", "TEC"), "TEC": ("TK", "TEC"), "ITK": ("TK", "TEC"),
+    "BMX": ("TK", "TEC"), "TXK": ("TK", "TEC"),
+    "SYK": ("TK", "SYK"), "ZAP70": ("TK", "SYK"),
+    "MET": ("TK", "MET"), "MST1R": ("TK", "MET"), "RON": ("TK", "MET"),
+    "RET": ("TK", "RET"), "ROS": ("TK", "ROS1"), "ROS1": ("TK", "ROS1"),
+    "ALK": ("TK", "ALK"), "LTK": ("TK", "ALK"),
+    "NTRK": ("TK", "TRK"), "AXL": ("TK", "AXL"), "TYRO3": ("TK", "AXL"),
+    "MERTK": ("TK", "AXL"), "EPHA": ("TK", "EPH"), "EPHB": ("TK", "EPH"),
+    "DDR": ("TK", "DDR"), "TEK": ("TK", "TIE"), "TIE": ("TK", "TIE"),
+    "FER": ("TK", "FER"), "FES": ("TK", "FER"),
+    "CSK": ("TK", "CSK"), "MATK": ("TK", "CSK"),
+    # TKL group
+    "RAF": ("TKL", "RAF"), "BRAF": ("TKL", "RAF"), "ARAF": ("TKL", "RAF"),
+    "MLK": ("TKL", "MLK"), "IRAK": ("TKL", "IRAK"), "RIPK": ("TKL", "RIPK"),
+    "LIMK": ("TKL", "LISK"), "TESK": ("TKL", "LISK"),
+    "ACVR": ("TKL", "STKR"), "BMPR": ("TKL", "STKR"), "TGFBR": ("TKL", "STKR"),
+    "BMR": ("TKL", "STKR"), "AMHR": ("TKL", "STKR"),
+    # Other group
+    "NEK": ("Other", "NEK"), "PLK": ("Other", "PLK"), "ULK": ("Other", "ULK"),
+    "BUB": ("Other", "BUB"), "AURK": ("Other", "AUR"), "AURKB": ("Other", "AUR"),
+    "CHEK": ("Other", "CHK"), "CHUK": ("Other", "IKK"), "IKBK": ("Other", "IKK"),
+    "TBK": ("Other", "IKK"), "CDC7": ("Other", "CDC7"), "CIT": ("Other", "CIT"),
+    "STK": ("Other", "Other_STK"), "RIOK": ("Other", "RIO"),
+    "GAK": ("Other", "NAK"), "AAK": ("Other", "NAK"),
+    "BCKD": ("Other", "BCKDK"), "EEF2K": ("Other", "Alpha"),
+    "TRPM": ("Other", "Alpha"), "EIF2AK": ("Other", "PEK"),
+    "WNK": ("Other", "WNK"), "PINK": ("Other", "Other_unique"),
+    "PBK": ("Other", "TOPK"), "MTOR": ("Other", "PIKK"),
+    "ATM": ("Other", "PIKK"), "ATR": ("Other", "PIKK"),
+    "PRKD": ("Other", "PKD"), "CSNK2": ("Other", "CK2"),
+}
+
+
+def _classify_kinase(gene_name, protein_name):
+    """Assign Manning group/family from gene name using prefix matching."""
+    if pd.isna(gene_name):
+        gene_name = ""
+    gene = str(gene_name).split()[0].upper()  # first gene symbol
+
+    # Try exact match first, then progressively shorter prefixes
+    for length in range(len(gene), 2, -1):
+        prefix = gene[:length]
+        if prefix in MANNING_GENE_MAP:
+            return MANNING_GENE_MAP[prefix]
+
+    # Fallback: check protein name for tyrosine kinase keywords
+    pname = str(protein_name).upper() if not pd.isna(protein_name) else ""
+    if "TYROSINE-PROTEIN KINASE" in pname or "TYROSINE KINASE" in pname:
+        return ("TK", "TK_other")
+
+    return ("Other", "Unclassified")
+
+
+def _is_tyrosine_kinase(row):
+    """Determine if a kinase is a tyrosine kinase from group, name, and activity."""
+    if row["group"] == "TK":
+        return 1
+    pname = str(row.get("Protein names", "")).lower()
+    if "tyrosine" in pname and "kinase" in pname:
+        return 1
+    cat = str(row.get("Catalytic activity", "")).lower()
+    if "tyros" in cat:
+        return 1
+    return 0
+
+
 def fetch_kinase_data():
     """
-    Download human kinase classification and substrate data.
-
-    Uses UniProt + KinBase for kinase group/family classification,
-    and a curated kinase–substrate specificity dataset.
+    Download human kinase data from UniProt, classify into Manning groups,
+    and derive Tyr/Ser-Thr labels.
     """
     print("=" * 60)
     print("Step 1: Preparing kinase dataset")
     print("=" * 60)
 
-    cache_path = os.path.join(DATA_DIR, "kinase_dataset.csv")
-    if os.path.exists(cache_path):
-        print(f"  Loading cached dataset: {cache_path}")
-        return pd.read_csv(cache_path)
+    processed_path = os.path.join(DATA_DIR, "kinase_processed.csv")
+    if os.path.exists(processed_path):
+        print(f"  Loading processed dataset: {processed_path}")
+        return pd.read_csv(processed_path)
 
-    # Attempt to download from UniProt
-    print("  Fetching human protein kinases from UniProt...")
-    try:
-        import requests
-        # Query UniProt for human protein kinases
-        url = ("https://rest.uniprot.org/uniprotkb/stream?"
-               "query=(organism_id:9606)+AND+(ec:2.7.11.*)+AND+(reviewed:true)"
-               "&format=tsv"
-               "&fields=accession,id,protein_name,gene_names,sequence,"
-               "cc_catalytic_activity,ft_act_site,ft_binding,cc_subcellular_location,"
-               "lineage")
-        resp = requests.get(url, timeout=120)
-        resp.raise_for_status()
+    # Try loading raw UniProt download
+    raw_path = os.path.join(DATA_DIR, "kinase_dataset.csv")
+    if os.path.exists(raw_path):
+        print(f"  Loading raw UniProt data: {raw_path}")
+        raw = pd.read_csv(raw_path)
+    else:
+        print("  Fetching human protein kinases from UniProt...")
+        try:
+            import requests
+            # Include both Ser/Thr kinases (2.7.11.*) and Tyr kinases (2.7.10.*)
+            url = ("https://rest.uniprot.org/uniprotkb/stream?"
+                   "query=(organism_id:9606)+AND+((ec:2.7.11.*)+OR+(ec:2.7.10.*))+AND+(reviewed:true)"
+                   "&format=tsv"
+                   "&fields=accession,id,protein_name,gene_names,sequence,"
+                   "cc_catalytic_activity,ft_act_site,ft_binding,cc_subcellular_location,"
+                   "lineage")
+            resp = requests.get(url, timeout=120)
+            resp.raise_for_status()
+            from io import StringIO
+            raw = pd.read_csv(StringIO(resp.text), sep="\t")
+            raw.to_csv(raw_path, index=False)
+            print(f"  Downloaded {len(raw)} human protein kinases")
+        except Exception as e:
+            print(f"  ⚠ UniProt download failed: {e}")
+            print("  Falling back to synthetic dataset...")
+            df = _generate_synthetic_kinase_data()
+            df.to_csv(processed_path, index=False)
+            return df
 
-        # Parse TSV
-        from io import StringIO
-        df = pd.read_csv(StringIO(resp.text), sep="\t")
-        print(f"  Downloaded {len(df)} human protein kinases")
+    # Standardise column names
+    col_map = {
+        "Entry": "accession", "Entry Name": "entry_name",
+        "Protein names": "Protein names", "Gene Names": "Gene Names",
+        "Sequence": "sequence", "Catalytic activity": "Catalytic activity",
+    }
+    for old, new in col_map.items():
+        if old in raw.columns and new != old:
+            raw = raw.rename(columns={old: new})
 
-    except Exception as e:
-        print(f"  ⚠ UniProt download failed: {e}")
-        print("  Generating synthetic kinase dataset for framework demonstration...")
-        df = _generate_synthetic_kinase_data()
+    # Drop entries without sequence
+    raw = raw.dropna(subset=["sequence"]).reset_index(drop=True)
 
-    df.to_csv(cache_path, index=False)
-    print(f"  Saved to {cache_path}")
-    return df
+    # Classify into Manning groups
+    print("  Classifying kinases into Manning groups...")
+    classifications = raw.apply(
+        lambda r: _classify_kinase(r.get("Gene Names", ""), r.get("Protein names", "")),
+        axis=1
+    )
+    raw["group"] = [c[0] for c in classifications]
+    raw["family"] = [c[1] for c in classifications]
+    raw["subfamily"] = raw["group"] + "_" + raw["family"]
+
+    # Derive Tyr/Ser-Thr label
+    raw["is_tyr_kinase"] = raw.apply(_is_tyrosine_kinase, axis=1)
+
+    # Trim sequences > 2000 aa (keep kinase domain region)
+    raw["seq_length"] = raw["sequence"].str.len()
+    raw.loc[raw["seq_length"] > 2000, "sequence"] = (
+        raw.loc[raw["seq_length"] > 2000, "sequence"].str[:2000]
+    )
+    raw["seq_length"] = raw["sequence"].str.len()
+
+    # Summary
+    print(f"  Processed {len(raw)} kinases:")
+    print(f"    Groups: {raw['group'].value_counts().to_dict()}")
+    print(f"    Tyr-kinases: {raw['is_tyr_kinase'].sum()} "
+          f"({raw['is_tyr_kinase'].mean():.1%})")
+
+    raw.to_csv(processed_path, index=False)
+    print(f"  Saved to {processed_path}")
+    return raw
 
 
 def _generate_synthetic_kinase_data():
@@ -210,7 +355,7 @@ def extract_kinase_features(df):
     # For each kinase, extract residues at approximate subdomain positions
     # (In real analysis, use PFAM/Prosite kinase domain alignment)
     for i, row in df.iterrows():
-        seq = row["sequence"]
+        seq = str(row["sequence"])
         L = len(seq)
 
         # Approximate positions based on kinase domain architecture
