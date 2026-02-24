@@ -3,22 +3,29 @@
 # Supports both Docker (recommended) and local installation
 
 INPUT_DIR=$(readlink -f results/alphafold_validation/fasta_inputs)
+MULTIMER_DIR=$(readlink -f results/alphafold_validation/fasta_inputs/multimer_only)
 OUTPUT_DIR=$(readlink -f results/alphafold_validation/af_predictions)
 CACHE_DIR=$(readlink -f cache_colabfold)
 
 mkdir -p $OUTPUT_DIR
 mkdir -p $CACHE_DIR
+rm -rf $MULTIMER_DIR
+mkdir -p $MULTIMER_DIR
+find $INPUT_DIR -maxdepth 1 -type f -name '*.fasta' ! -name '*_separate.fasta' -exec cp {} $MULTIMER_DIR/ \;
+
+echo "Using paired multimer FASTAs from: $MULTIMER_DIR"
+ls -1 $MULTIMER_DIR | head -20
 
 # Check if Docker is available
 if command -v docker &> /dev/null; then
     echo "Using Docker (ghcr.io/sokrypton/colabfold:1.5.5-cuda12.2.2)..."
-    echo "Input: $INPUT_DIR"
+    echo "Input: $MULTIMER_DIR"
     echo "Output: $OUTPUT_DIR"
     echo "Cache: $CACHE_DIR"
     
     docker run --gpus all --rm \
       -v "${CACHE_DIR}:/cache" \
-      -v "${INPUT_DIR}:/input" \
+      -v "${MULTIMER_DIR}:/input" \
       -v "${OUTPUT_DIR}:/output" \
       ghcr.io/sokrypton/colabfold:1.5.5-cuda12.2.2 \
       colabfold_batch \
@@ -42,5 +49,5 @@ else
       --num-models 5 \
       --amber \
       --use-gpu-relax \
-      $INPUT_DIR $OUTPUT_DIR
+      $MULTIMER_DIR $OUTPUT_DIR
 fi

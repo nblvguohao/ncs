@@ -50,9 +50,11 @@ from leakageguard.features.bw_site import (
 DATA_DIR = os.path.join(PROJECT_DIR, "data")
 RESULTS_DIR = os.path.join(PROJECT_DIR, "results", "alphafold_validation")
 FASTA_DIR = os.path.join(RESULTS_DIR, "fasta_inputs")
+FASTA_SEPARATE_DIR = os.path.join(FASTA_DIR, "separate_chains")
 AF_OUTPUT_DIR = os.path.join(RESULTS_DIR, "af_predictions")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 os.makedirs(FASTA_DIR, exist_ok=True)
+os.makedirs(FASTA_SEPARATE_DIR, exist_ok=True)
 os.makedirs(AF_OUTPUT_DIR, exist_ok=True)
 
 # ── Configuration ─────────────────────────────────────────────────────────
@@ -99,6 +101,7 @@ def prepare_fasta_inputs():
         seq_map[entry] = dataset.sequences[i]
 
     generated = []
+    generated_separate = []
     for entry_name, info in VALIDATION_RECEPTORS.items():
         if entry_name not in seq_map:
             print(f"  ⚠ {entry_name} not found in dataset, skipping")
@@ -113,13 +116,14 @@ def prepare_fasta_inputs():
             f.write(f">{entry_name}__{info['galpha']}\n")
             f.write(f"{receptor_seq}:{galpha_seq}\n")
 
-        # Also write separate chains for standard AF-Multimer
-        fasta_sep = os.path.join(FASTA_DIR, f"{entry_name}_separate.fasta")
+        # Also write separate chains (kept in dedicated subdir to avoid accidental batch use)
+        fasta_sep = os.path.join(FASTA_SEPARATE_DIR, f"{entry_name}_separate.fasta")
         with open(fasta_sep, "w") as f:
             f.write(f">{entry_name}\n{receptor_seq}\n")
             f.write(f">{info['galpha']}\n{galpha_seq}\n")
 
         generated.append(entry_name)
+        generated_separate.append(fasta_sep)
         print(f"  ✓ {entry_name} ({info['name']}) → {fasta_path}")
 
     # Write batch script for ColabFold
@@ -128,18 +132,23 @@ def prepare_fasta_inputs():
         f.write("#!/bin/bash\n")
         f.write("# Run ColabFold batch predictions for GPCR-Gα complexes\n")
         f.write("# Requires: pip install colabfold[alphafold]\n")
+        f.write("# NOTE: only paired multimer FASTAs are used (exclude *_separate.fasta)\n")
         f.write(f"# Expected runtime: ~2-8 hours per complex on A100\n\n")
         f.write(f"INPUT_DIR={FASTA_DIR}\n")
+        f.write(f"MULTIMER_DIR=${{INPUT_DIR}}/multimer_only\n")
         f.write(f"OUTPUT_DIR={AF_OUTPUT_DIR}\n\n")
+        f.write("mkdir -p $MULTIMER_DIR\n")
+        f.write("find $INPUT_DIR -maxdepth 1 -type f -name '*.fasta' ! -name '*_separate.fasta' -exec cp {} $MULTIMER_DIR/ \\;\n\n")
         f.write("colabfold_batch \\\n")
         f.write("  --model-type alphafold2_multimer_v3 \\\n")
         f.write("  --num-recycle 3 \\\n")
         f.write("  --num-models 5 \\\n")
         f.write("  --amber \\\n")
         f.write("  --use-gpu-relax \\\n")
-        f.write("  $INPUT_DIR $OUTPUT_DIR\n")
+        f.write("  $MULTIMER_DIR $OUTPUT_DIR\n")
 
     print(f"\n  Generated {len(generated)} FASTA files")
+    print(f"  Separate-chain FASTAs: {len(generated_separate)} files in {FASTA_SEPARATE_DIR}")
     print(f"  Batch script: {batch_script}")
     print(f"\n  To run on server:")
     print(f"    bash {batch_script}")
@@ -156,13 +165,33 @@ def run_af_predictions(af2_binary="colabfold_batch"):
     print("Step 2: Running AlphaFold-Multimer predictions")
     print("=" * 60)
 
+    import shutil
+
+    # Ensure only paired multimer inputs are used
+    multimer_dir = os.path.join(FASTA_DIR, "multimer_only")
+    if os.path.exists(multimer_dir):
+        shutil.rmtree(multimer_dir)
+    os.makedirs(multimer_dir, exist_ok=True)
+
+    import glob
+    for fasta_path in glob.glob(os.path.join(FASTA_DIR, "*.fasta")):
+        if fasta_path.endswith("_separate.fasta"):
+            continue
+        shutil.copy(fasta_path, multimer_dir)
+
+    n_multimer = len(glob.glob(os.path.join(multimer_dir, "*.fasta")))
+    print(f"  Multimer FASTA inputs: {n_multimer} files")
+    if n_multimer == 0:
+        print("  ✗ No paired multimer FASTA found. Run --step prepare first.")
+        return
+
     cmd = [
         af2_binary,
         "--model-type", "alphafold2_multimer_v3",
         "--num-recycle", "3",
         "--num-models", "5",
         "--amber",
-        FASTA_DIR,
+        multimer_dir,
         AF_OUTPUT_DIR,
     ]
     print(f"  Command: {' '.join(cmd)}")
@@ -265,6 +294,44 @@ def _map_resid_to_bw(entry_name, resid, bw_cache):
     return None
 
 
+def _get_atom_chains(pdb_path):
+    """Return chain IDs that contain ATOM records."""
+    chains = set()
+    with open(pdb_path, "r", encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            if line.startswith("ATOM") and len(line) > 21:
+                chains.add(line[21])
+    return chains
+
+
+def _select_best_pdb(entry_name, info):
+    """Select best PDB path, prioritizing true GPCR-Galpha multimer outputs."""
+    import glob
+
+    galpha = info["galpha"]
+    pdb_candidates = [
+        # Highest priority: explicit receptor__galpha multimer naming
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}__{galpha}_relaxed_rank_001*.pdb"),
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}__{galpha}_unrelaxed_rank_001*.pdb"),
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}*__{galpha}*relaxed_rank_001*.pdb"),
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}*__{galpha}*unrelaxed_rank_001*.pdb"),
+        # Fallbacks (older output layouts)
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}_relaxed_rank_001*.pdb"),
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}_unrelaxed_rank_001*.pdb"),
+        os.path.join(AF_OUTPUT_DIR, entry_name, "ranked_0.pdb"),
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}.pdb"),
+        # Last resort: separate files (often monomer-only, validated below)
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}_separate_relaxed_rank_001*.pdb"),
+        os.path.join(AF_OUTPUT_DIR, f"{entry_name}_separate_unrelaxed_rank_001*.pdb"),
+    ]
+
+    for pattern in pdb_candidates:
+        matches = glob.glob(pattern)
+        if matches:
+            return matches[0]
+    return None
+
+
 def analyze_predictions():
     """Analyze AF-Multimer predictions: extract contacts, compare with BW sites."""
     print("=" * 60)
@@ -275,28 +342,23 @@ def analyze_predictions():
 
     # Find predicted PDB files
     results = []
+    skipped_missing_multimer = []
     for entry_name, info in VALIDATION_RECEPTORS.items():
-        # ColabFold output naming convention
-        # Note: Filenames might include galpha suffix (e.g. opn4_human__gnaq...)
-        pdb_candidates = [
-            os.path.join(AF_OUTPUT_DIR, f"{entry_name}_relaxed_rank_001*.pdb"),
-            os.path.join(AF_OUTPUT_DIR, f"{entry_name}*relaxed_rank_001*.pdb"), # Added wildcard for suffix
-            os.path.join(AF_OUTPUT_DIR, f"{entry_name}_unrelaxed_rank_001*.pdb"),
-            os.path.join(AF_OUTPUT_DIR, f"{entry_name}*unrelaxed_rank_001*.pdb"),
-            os.path.join(AF_OUTPUT_DIR, entry_name, "ranked_0.pdb"),
-            os.path.join(AF_OUTPUT_DIR, f"{entry_name}.pdb"),
-        ]
-
-        import glob
-        pdb_path = None
-        for pattern in pdb_candidates:
-            matches = glob.glob(pattern)
-            if matches:
-                pdb_path = matches[0]
-                break
+        pdb_path = _select_best_pdb(entry_name, info)
 
         if pdb_path is None:
             print(f"  ⚠ No PDB found for {entry_name}, skipping")
+            skipped_missing_multimer.append(entry_name)
+            continue
+
+        chains = _get_atom_chains(pdb_path)
+        if not {"A", "B"}.issubset(chains):
+            print(
+                f"  ⚠ {entry_name}: selected file has chains {sorted(chains)} only "
+                f"({os.path.basename(pdb_path)}). This is likely monomer/separate output; "
+                "skip from contact analysis."
+            )
+            skipped_missing_multimer.append(entry_name)
             continue
 
         print(f"\n  Analyzing {entry_name} ({info['name']})...")
@@ -333,6 +395,12 @@ def analyze_predictions():
     if not results:
         print("\n  No predictions found. Run Step 2 first.")
         return
+
+    if skipped_missing_multimer:
+        print(
+            "\n  Skipped receptors without valid two-chain GPCR-Galpha multimer PDB: "
+            f"{sorted(skipped_missing_multimer)}"
+        )
 
     # Summary statistics
     df = pd.DataFrame(results)
