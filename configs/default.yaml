@@ -1,0 +1,37 @@
+# Default experiment configuration
+data:
+  dataset: gpcrdb_coupling_dataset
+  exclude_unknown: true
+  targets: [Gs, Gi, Gq, G12]
+
+features:
+  handcrafted: true
+  bw_site: true
+  combined: true
+  esm2_model: esm2_t6_8M_UR50D   # Options: esm2_t6_8M, esm2_t12_35M, esm2_t30_150M
+
+splits:
+  single:
+    - random
+    - subfamily
+    - seqcluster_0.4
+    - seqcluster_0.3
+  cv:
+    n_folds: 5
+    n_repeats: 10
+    strategies:
+      - random_cv
+      - subfamily_cv
+
+models:
+  - LR
+  - RF
+  - GBM
+  - SVM
+  - XGB
+  - MLP
+  - Ensemble
+
+evaluation:
+  n_bootstrap: 1000
+  random_seed: 42

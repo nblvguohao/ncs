@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environments
+.venv/
+venv/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Data (large files)
+data/gpcrdb_residues_cache.json
+data/esm2_*.npz
+data/esm2_*.npy
+data/*.json
+!data/.gitkeep
+
+# Results (regenerable)
+results/*.csv
+!results/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.bak
