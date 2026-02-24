@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "leakageguard"
+version = "0.1.0"
+description = "Leakage-aware benchmarking for GPCR–G protein coupling prediction"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Guohao Lv"},
+    {name = "Xiaosong Wang"},
+    {name = "Lichuan Gu", email = "gulichuan@ahau.edu.cn"},
+]
+keywords = ["GPCR", "G-protein", "coupling", "data-leakage", "benchmarking", "machine-learning"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "numpy>=1.23",
+    "pandas>=1.5",
+    "scikit-learn>=1.2",
+    "scipy>=1.10",
+    "matplotlib>=3.6",
+    "seaborn>=0.12",
+    "xgboost>=1.7",
+    "shap>=0.42",
+]
+
+[project.optional-dependencies]
+esm = ["fair-esm>=2.0", "torch>=2.0"]
+dev = ["pytest>=7.0", "pytest-cov", "black", "ruff", "mypy"]
+docs = ["sphinx", "sphinx-rtd-theme", "myst-parser"]
+all = ["leakageguard[esm,dev,docs]"]
+
+[project.scripts]
+leakageguard = "leakageguard.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/nblvguohao/ncs"
+Repository = "https://github.com/nblvguohao/ncs"
+Documentation = "https://github.com/nblvguohao/ncs#readme"
+
+[tool.setuptools.packages.find]
+include = ["leakageguard*"]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

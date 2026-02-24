@@ -21,12 +21,12 @@ warnings.filterwarnings("ignore")
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIR)
 
-from src.data.dataset import GPCRDataset
-from src.features.handcrafted import build_feature_matrix
-from src.features.bw_site import load_bw_cache, build_bw_feature_matrix
-from src.splits.strategies import random_split, subfamily_split, grouped_kfold_cv
-from src.models.classifiers import build_models
-from src.evaluation.metrics import bootstrap_metrics, compute_fold_metrics, aggregate_cv_results
+from leakageguard.data.dataset import GPCRDataset
+from leakageguard.features.handcrafted import build_feature_matrix
+from leakageguard.features.bw_site import load_bw_cache, build_bw_feature_matrix
+from leakageguard.splits.strategies import random_split, subfamily_split, grouped_kfold_cv
+from leakageguard.models.classifiers import build_models
+from leakageguard.evaluation.metrics import bootstrap_metrics, compute_fold_metrics, aggregate_cv_results
 from sklearn.base import clone
 from sklearn.preprocessing import StandardScaler
 

@@ -24,12 +24,12 @@ from sklearn.preprocessing import StandardScaler
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIR)
 
-from src.data.dataset import GPCRDataset, COUPLING_TARGETS
-from src.features.handcrafted import build_feature_matrix
-from src.features.bw_site import load_bw_cache, build_bw_feature_matrix
-from src.splits.strategies import grouped_kfold_cv, repeated_grouped_kfold_cv
-from src.models.classifiers import build_models
-from src.evaluation.metrics import compute_fold_metrics, aggregate_cv_results
+from leakageguard.data.dataset import GPCRDataset, COUPLING_TARGETS
+from leakageguard.features.handcrafted import build_feature_matrix
+from leakageguard.features.bw_site import load_bw_cache, build_bw_feature_matrix
+from leakageguard.splits.strategies import grouped_kfold_cv, repeated_grouped_kfold_cv
+from leakageguard.models.classifiers import build_models
+from leakageguard.evaluation.metrics import compute_fold_metrics, aggregate_cv_results
 
 RESULTS_DIR = os.path.join(PROJECT_DIR, "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
