@@ -215,24 +215,35 @@ def _parse_pdb_contacts(pdb_path, chain_receptor="A", chain_galpha="B",
                     galpha_atoms.append(atom)
 
     # Find contacts using NeighborSearch
-    ns = NeighborSearch(galpha_atoms)
-    contacts = []
-    seen = set()
-    for atom in receptor_atoms:
-        nearby = ns.search(atom.get_vector().get_array(), threshold)
-        for ga_atom in nearby:
-            r_res = atom.get_parent()
-            g_res = ga_atom.get_parent()
-            key = (r_res.id[1], g_res.id[1])
-            if key not in seen:
-                dist = atom - ga_atom
-                contacts.append({
-                    "receptor_resid": r_res.id[1],
-                    "receptor_resname": r_res.resname,
-                    "galpha_resid": g_res.id[1],
-                    "distance": dist,
-                })
-                seen.add(key)
+    try:
+        # Check if atoms have valid coordinates
+        valid_receptor_atoms = [a for a in receptor_atoms if not np.isnan(a.get_coord()).any()]
+        valid_galpha_atoms = [a for a in galpha_atoms if not np.isnan(a.get_coord()).any()]
+
+        if not valid_galpha_atoms or not valid_receptor_atoms:
+            return []
+
+        ns = NeighborSearch(valid_galpha_atoms)
+        contacts = []
+        seen = set()
+        for atom in valid_receptor_atoms:
+            nearby = ns.search(atom.get_coord(), threshold)
+            for ga_atom in nearby:
+                r_res = atom.get_parent()
+                g_res = ga_atom.get_parent()
+                key = (r_res.id[1], g_res.id[1])
+                if key not in seen:
+                    dist = atom - ga_atom
+                    contacts.append({
+                        "receptor_resid": r_res.id[1],
+                        "receptor_resname": r_res.resname,
+                        "galpha_resid": g_res.id[1],
+                        "distance": dist,
+                    })
+                    seen.add(key)
+    except Exception as e:
+        print(f"  ⚠ Warning: Contact calculation failed ({e})")
+        return []
 
     return contacts
 
@@ -266,9 +277,12 @@ def analyze_predictions():
     results = []
     for entry_name, info in VALIDATION_RECEPTORS.items():
         # ColabFold output naming convention
+        # Note: Filenames might include galpha suffix (e.g. opn4_human__gnaq...)
         pdb_candidates = [
             os.path.join(AF_OUTPUT_DIR, f"{entry_name}_relaxed_rank_001*.pdb"),
+            os.path.join(AF_OUTPUT_DIR, f"{entry_name}*relaxed_rank_001*.pdb"), # Added wildcard for suffix
             os.path.join(AF_OUTPUT_DIR, f"{entry_name}_unrelaxed_rank_001*.pdb"),
+            os.path.join(AF_OUTPUT_DIR, f"{entry_name}*unrelaxed_rank_001*.pdb"),
             os.path.join(AF_OUTPUT_DIR, entry_name, "ranked_0.pdb"),
             os.path.join(AF_OUTPUT_DIR, f"{entry_name}.pdb"),
         ]

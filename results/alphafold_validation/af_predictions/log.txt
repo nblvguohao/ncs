@@ -1,63 +1,132 @@
-2026-02-24 14:47:14,895 Running colabfold 1.5.5
-2026-02-24 14:47:15,611 Unable to initialize backend 'rocm': NOT_FOUND: Could not find registered platform with name: "rocm". Available platform names are: CUDA Interpreter
-2026-02-24 14:47:15,612 Unable to initialize backend 'tpu': module 'jaxlib.xla_extension' has no attribute 'get_tpu_client'
-2026-02-24 14:47:17,593 Running on GPU
-2026-02-24 14:47:18,303 Found 6 citations for tools or databases
-2026-02-24 14:47:18,303 Query 1/1: oprm_human__gnai (length 754)
-2026-02-24 14:47:24,342 Timeout while submitting to MSA server. Retrying...
-2026-02-24 14:47:24,578 Sleeping for 7s. Reason: PENDING
-2026-02-24 14:47:31,910 Sleeping for 6s. Reason: RUNNING
-2026-02-24 14:47:38,398 Sleeping for 7s. Reason: RUNNING
-2026-02-24 14:47:51,436 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:47:52,742 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:47:58,535 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:48:14,576 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:48:20,607 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:48:26,638 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:48:26,962 Sleeping for 8s. Reason: RUNNING
-2026-02-24 14:48:35,172 Sleeping for 6s. Reason: RUNNING
-2026-02-24 14:48:47,209 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:48:48,711 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:49:00,326 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:49:10,545 Sleeping for 7s. Reason: RUNNING
-2026-02-24 14:49:18,516 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:49:23,911 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:49:29,727 Sleeping for 9s. Reason: RUNNING
-2026-02-24 14:49:40,814 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:49:56,855 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:49:57,321 Sleeping for 8s. Reason: RUNNING
-2026-02-24 14:50:11,354 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:50:17,385 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:50:17,620 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:50:23,830 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:50:39,870 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:50:40,573 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:50:51,608 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:50:57,639 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:52:23,557 Timeout while submitting to MSA server. Retrying...
-2026-02-24 14:52:29,597 Timeout while submitting to MSA server. Retrying...
-2026-02-24 14:52:30,029 Sleeping for 5s. Reason: PENDING
-2026-02-24 14:52:35,262 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:52:40,665 Sleeping for 8s. Reason: RUNNING
-2026-02-24 14:52:48,875 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:53:04,917 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:53:06,171 Sleeping for 7s. Reason: RUNNING
-2026-02-24 14:53:13,431 Sleeping for 10s. Reason: RUNNING
-2026-02-24 14:53:24,474 Sleeping for 5s. Reason: RUNNING
-2026-02-24 14:53:30,730 Sleeping for 9s. Reason: RUNNING
-2026-02-24 14:53:40,981 Sleeping for 8s. Reason: RUNNING
-2026-02-24 14:53:49,194 Sleeping for 9s. Reason: RUNNING
-2026-02-24 14:53:58,873 Sleeping for 9s. Reason: RUNNING
-2026-02-24 14:54:13,913 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:54:19,948 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:54:25,981 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:54:32,011 Timeout while fetching status from MSA server. Retrying...
-2026-02-24 14:54:39,271 Timeout while fetching result from MSA server. Retrying...
-2026-02-24 14:54:45,186 Setting max_seq=508, max_extra_seq=2048
-2026-02-24 14:55:50,785 alphafold2_multimer_v3_model_1_seed_000 recycle=0 pLDDT=74.7 pTM=0.644 ipTM=0.562
-2026-02-24 14:56:02,252 alphafold2_multimer_v3_model_1_seed_000 recycle=1 pLDDT=77.9 pTM=0.696 ipTM=0.629 tol=3.01
-2026-02-24 14:56:02,254 alphafold2_multimer_v3_model_1_seed_000 took 62.6s (1 recycles)
-2026-02-24 14:56:02,836 reranking models by 'multimer' metric
-2026-02-24 14:56:40,715 Relaxation took 37.9s
-2026-02-24 14:56:40,716 rank_001_alphafold2_multimer_v3_model_1_seed_000 pLDDT=77.9 pTM=0.696 ipTM=0.629
-2026-02-24 14:56:41,513 Done
+2026-02-24 15:01:20,170 Running colabfold 1.5.5
+2026-02-24 15:01:20,172 More than one sequence in /input/5ht2a_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,172 More than one sequence in /input/acm1_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/acm4_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/adrb2_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/drd1_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/glr_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/hrh1_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/opn4_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/oprm_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,173 More than one sequence in /input/opsd_human_separate.fasta, ignoring all but the first sequence
+2026-02-24 15:01:20,975 Unable to initialize backend 'rocm': NOT_FOUND: Could not find registered platform with name: "rocm". Available platform names are: Interpreter CUDA
+2026-02-24 15:01:20,977 Unable to initialize backend 'tpu': module 'jaxlib.xla_extension' has no attribute 'get_tpu_client'
+2026-02-24 15:01:22,953 Running on GPU
+2026-02-24 15:01:23,658 Found 6 citations for tools or databases
+2026-02-24 15:01:23,658 Query 1/20: opsd_human_separate (length 348)
+2026-02-24 15:01:29,913 Timeout while fetching result from MSA server. Retrying...
+2026-02-24 15:01:35,943 Timeout while fetching result from MSA server. Retrying...
+2026-02-24 15:01:41,975 Timeout while fetching result from MSA server. Retrying...
+2026-02-24 15:02:55,604 alphafold2_multimer_v3_model_1_seed_000 recycle=0 pLDDT=92.6 pTM=0.866 ipTM=0
+2026-02-24 15:02:59,318 alphafold2_multimer_v3_model_1_seed_000 recycle=1 pLDDT=93.7 pTM=0.87 ipTM=0 tol=0.472
+2026-02-24 15:02:59,319 alphafold2_multimer_v3_model_1_seed_000 took 43.2s (1 recycles)
+2026-02-24 15:02:59,465 reranking models by 'multimer' metric
+2026-02-24 15:03:17,968 Relaxation took 18.5s
+2026-02-24 15:03:17,968 rank_001_alphafold2_multimer_v3_model_1_seed_000 pLDDT=93.7 pTM=0.87 ipTM=0
+2026-02-24 15:03:18,538 Query 2/20: oprm_human_separate (length 400)
+2026-02-24 15:03:19,143 Sleeping for 6s. Reason: PENDING
+2026-02-24 15:03:25,404 Sleeping for 8s. Reason: PENDING
+2026-02-24 15:03:34,249 Sleeping for 5s. Reason: PENDING
+2026-02-24 15:03:39,494 Sleeping for 8s. Reason: PENDING
+2026-02-24 15:03:47,718 Sleeping for 6s. Reason: PENDING
+2026-02-24 15:03:53,904 Sleeping for 9s. Reason: PENDING
+2026-02-24 15:04:03,088 Sleeping for 10s. Reason: PENDING
+2026-02-24 15:04:13,762 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:04:20,980 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:04:30,491 Sleeping for 5s. Reason: RUNNING
+2026-02-24 15:04:35,682 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:04:44,895 Sleeping for 6s. Reason: RUNNING
+2026-02-24 15:04:51,716 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:04:59,259 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:05:08,595 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:05:18,065 Sleeping for 5s. Reason: RUNNING
+2026-02-24 15:05:23,425 Sleeping for 10s. Reason: RUNNING
+2026-02-24 15:05:33,998 Sleeping for 6s. Reason: RUNNING
+2026-02-24 15:05:40,331 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:05:47,864 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:05:55,521 Sleeping for 10s. Reason: RUNNING
+2026-02-24 15:06:06,092 Sleeping for 8s. Reason: RUNNING
+2026-02-24 15:06:14,423 Sleeping for 8s. Reason: RUNNING
+2026-02-24 15:06:22,676 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:06:29,880 Sleeping for 5s. Reason: RUNNING
+2026-02-24 15:06:35,338 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:06:42,617 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:06:51,855 Sleeping for 8s. Reason: RUNNING
+2026-02-24 15:08:30,468 alphafold2_multimer_v3_model_1_seed_000 recycle=0 pLDDT=83.4 pTM=0.71 ipTM=0
+2026-02-24 15:08:34,572 alphafold2_multimer_v3_model_1_seed_000 recycle=1 pLDDT=85.1 pTM=0.716 ipTM=0 tol=3.44
+2026-02-24 15:08:34,573 alphafold2_multimer_v3_model_1_seed_000 took 31.4s (1 recycles)
+2026-02-24 15:08:34,729 reranking models by 'multimer' metric
+2026-02-24 15:08:50,268 Relaxation took 15.5s
+2026-02-24 15:08:50,269 rank_001_alphafold2_multimer_v3_model_1_seed_000 pLDDT=85.1 pTM=0.716 ipTM=0
+2026-02-24 15:08:50,818 Query 3/20: adrb2_human_separate (length 413)
+2026-02-24 15:08:57,075 Timeout while fetching result from MSA server. Retrying...
+2026-02-24 15:09:03,106 Timeout while fetching result from MSA server. Retrying...
+2026-02-24 15:10:25,394 alphafold2_multimer_v3_model_1_seed_000 recycle=0 pLDDT=82.4 pTM=0.739 ipTM=0
+2026-02-24 15:10:30,128 alphafold2_multimer_v3_model_1_seed_000 recycle=1 pLDDT=84.5 pTM=0.746 ipTM=0 tol=4.15
+2026-02-24 15:10:30,129 alphafold2_multimer_v3_model_1_seed_000 took 56.0s (1 recycles)
+2026-02-24 15:10:30,321 reranking models by 'multimer' metric
+2026-02-24 15:10:49,969 Relaxation took 19.6s
+2026-02-24 15:10:49,970 rank_001_alphafold2_multimer_v3_model_1_seed_000 pLDDT=84.5 pTM=0.746 ipTM=0
+2026-02-24 15:10:50,528 Query 4/20: drd1_human_separate (length 446)
+2026-02-24 15:10:50,813 Sleeping for 7s. Reason: PENDING
+2026-02-24 15:11:03,851 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:11:09,882 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:11:10,209 Sleeping for 8s. Reason: PENDING
+2026-02-24 15:11:18,455 Sleeping for 10s. Reason: PENDING
+2026-02-24 15:11:34,496 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:11:40,533 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:11:40,833 Sleeping for 10s. Reason: PENDING
+2026-02-24 15:11:56,874 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:11:57,195 Sleeping for 5s. Reason: PENDING
+2026-02-24 15:12:02,513 Sleeping for 6s. Reason: PENDING
+2026-02-24 15:12:08,708 Sleeping for 6s. Reason: PENDING
+2026-02-24 15:12:15,309 Sleeping for 9s. Reason: PENDING
+2026-02-24 15:12:30,341 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:12:30,601 Sleeping for 7s. Reason: PENDING
+2026-02-24 15:12:38,355 Sleeping for 10s. Reason: PENDING
+2026-02-24 15:12:48,672 Sleeping for 8s. Reason: PENDING
+2026-02-24 15:12:59,381 Sleeping for 7s. Reason: PENDING
+2026-02-24 15:13:12,418 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:13:13,124 Sleeping for 8s. Reason: PENDING
+2026-02-24 15:13:21,893 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:13:36,934 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:13:37,478 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:13:45,189 Sleeping for 8s. Reason: RUNNING
+2026-02-24 15:13:53,701 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:14:08,741 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:14:11,060 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:14:20,308 Sleeping for 10s. Reason: RUNNING
+2026-02-24 15:14:30,880 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:14:38,060 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:14:48,532 Sleeping for 5s. Reason: RUNNING
+2026-02-24 15:14:53,720 Sleeping for 8s. Reason: RUNNING
+2026-02-24 15:15:01,953 Sleeping for 7s. Reason: RUNNING
+2026-02-24 15:15:09,697 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:15:24,738 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:15:24,993 Sleeping for 10s. Reason: RUNNING
+2026-02-24 15:15:41,034 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:15:41,795 Sleeping for 5s. Reason: RUNNING
+2026-02-24 15:15:47,281 Sleeping for 8s. Reason: RUNNING
+2026-02-24 15:16:01,320 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:16:07,352 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:16:08,153 Sleeping for 5s. Reason: RUNNING
+2026-02-24 15:16:19,189 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:16:21,038 Sleeping for 9s. Reason: RUNNING
+2026-02-24 15:16:36,077 Timeout while fetching status from MSA server. Retrying...
+2026-02-24 15:18:00,242 alphafold2_multimer_v3_model_1_seed_000 recycle=0 pLDDT=79 pTM=0.722 ipTM=0
+2026-02-24 15:18:05,358 alphafold2_multimer_v3_model_1_seed_000 recycle=1 pLDDT=80.1 pTM=0.725 ipTM=0 tol=4.46
+2026-02-24 15:18:05,359 alphafold2_multimer_v3_model_1_seed_000 took 51.0s (1 recycles)
+2026-02-24 15:18:05,613 reranking models by 'multimer' metric
+2026-02-24 15:18:25,105 Relaxation took 19.5s
+2026-02-24 15:18:25,105 rank_001_alphafold2_multimer_v3_model_1_seed_000 pLDDT=80.1 pTM=0.725 ipTM=0
+2026-02-24 15:18:25,733 Query 5/20: acm1_human_separate (length 460)
+2026-02-24 15:18:31,771 Timeout while submitting to MSA server. Retrying...
+2026-02-24 15:18:37,801 Timeout while submitting to MSA server. Retrying...
+2026-02-24 15:18:43,831 Timeout while submitting to MSA server. Retrying...
+2026-02-24 15:20:24,325 alphafold2_multimer_v3_model_1_seed_000 recycle=0 pLDDT=77.8 pTM=0.704 ipTM=0
+2026-02-24 15:20:29,568 alphafold2_multimer_v3_model_1_seed_000 recycle=1 pLDDT=79.6 pTM=0.713 ipTM=0 tol=2.21
+2026-02-24 15:20:29,570 alphafold2_multimer_v3_model_1_seed_000 took 44.6s (1 recycles)
+2026-02-24 15:20:29,810 reranking models by 'multimer' metric
+2026-02-24 15:20:48,364 Relaxation took 18.6s
+2026-02-24 15:20:48,364 rank_001_alphafold2_multimer_v3_model_1_seed_000 pLDDT=79.6 pTM=0.713 ipTM=0
+2026-02-24 15:20:48,924 Query 6/20: 5ht2a_human_separate (length 471)
