@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Lv"
+    given-names: "Guohao"
+  - family-names: "Wang"
+    given-names: "Xiaosong"
+  - family-names: "Gu"
+    given-names: "Lichuan"
+title: "Addressing data leakage in GPCR–G protein coupling prediction: a benchmarking protocol with structure-aligned determinants and melanopsin case study"
+version: 0.1.0
+date-released: 2025-01-01
+url: "https://github.com/nblvguohao/ncs"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Lv"
+      given-names: "Guohao"
+    - family-names: "Wang"
+      given-names: "Xiaosong"
+    - family-names: "Gu"
+      given-names: "Lichuan"
+  title: "Addressing data leakage in GPCR–G protein coupling prediction: a benchmarking protocol with structure-aligned determinants and melanopsin case study"
+  journal: "Nature Computational Science"
+  year: 2025
+  status: submitted
